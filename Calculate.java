@@ -5,6 +5,7 @@ import java.util.Stack;
 
 public class Calculate {
 	Stack<Operator> stack = new Stack<Operator>();
+	Stack<String> inside_bracket_str = new Stack<String>();
 	Queue<Operand> num_queue = new LinkedList<Operand>();
 	ScreenPanel sp;
 
@@ -31,10 +32,10 @@ public class Calculate {
 		}
 		else sp.clear_screen();
 	}
-	public Calculate(String str) {
+	public Calculate(String str, ScreenPanel sp) {
 		str_expression = str;
 		original_expression = str;
-		System.out.println(str);
+		System.out.println("inside str: "+str);
 		convert_to_postfix();
 		//System.out.println("inside status: " + status);
 		if(status) {
@@ -42,7 +43,8 @@ public class Calculate {
 			if(temp<0) minus_count++;
 			temp = Math.abs(temp);
 			str_expression = String.valueOf(temp);
-			//System.out.println("insdie str: " + str_expression);
+			System.out.println("After str: "+str_expression);
+			//System.out.println("inside str: " + str_expression);
 		}
 	}
 	
@@ -57,6 +59,8 @@ public class Calculate {
 			if(str.charAt(i)=='(') {
 				in_bracket = true;
 				bracket_count++;
+				inside_bracket_str.add(in_bracket_str);
+				in_bracket_str = "";
 				continue;
 			}
 			else if(str.charAt(i)==')') {
@@ -64,13 +68,17 @@ public class Calculate {
 				System.out.println("bracket count: "+bracket_count);
 				if(bracket_count > 1) in_bracket_str += ')';
 				else if(bracket_count ==0)in_bracket = false;
-				System.out.println("before in_bracket_str: "+in_bracket_str);
-				Calculate temp_cal = new Calculate(in_bracket_str);
-				in_bracket_str = "";
-				System.out.println("number: " + number);
+				//in_bracket_str = inside_bracket_str.pop() + in_bracket_str;
+				//System.out.println("before in_bracket_str: "+in_bracket_str);
+				Calculate temp_cal = new Calculate(in_bracket_str, sp);
+				in_bracket_str = inside_bracket_str.pop();
+				//System.out.println("number: " + number);
 				number ="";
 				number += temp_cal.get_str_expression();
-				if(bracket_count > 1) in_bracket_str += temp_cal.get_str_expression();
+				if(bracket_count >= 1) {
+					//in_bracket_str += stack.peek().get_symbol();
+					in_bracket_str += temp_cal.get_str_expression();
+				}
 
 				System.out.println("after in_bracket_str: "+in_bracket_str);
 
@@ -122,7 +130,7 @@ public class Calculate {
 						//else if(stack.peek().get_symbol().equals(""))
 					
 					}
-					/*else if( str.charAt(i)=='-' && stack.peek().get_symbol().equals("√")) {
+					/*else if( str.charAt(i)=='-' && stack.peek().get_symbol().equals("�닖")) {
 						
 					}*/
 					else if(str.charAt(i)=='+') {;
@@ -143,6 +151,9 @@ public class Calculate {
 					num_queue.add(temp_num);
 					temp_str += number + ",";
 					number = "";
+					if(stack.peek().get_symbol().equals("√")) {
+						temp_str += stack.pop().get_symbol() + ",";
+					}
 					while((op.get_precedence(stack.peek())>=op.get_precedence(temp_op)) && (stack.peek().get_symbol() != "$")){
 						//System.out.println(temp_str);
 						//System.out.println((op.get_precedence(stack.peek()) + op.get_precedence(temp_op)));
@@ -165,7 +176,8 @@ public class Calculate {
 		}
 		if(number.length()!=0) num_queue.add(new Operand(number));
 		else {
-			if(original_expression.charAt(original_expression.length()-1)==')') return;
+			if(original_expression.length()==0) return;
+			else if(original_expression.charAt(original_expression.length()-1)==')') return;
 			else {
 				System.out.println("here2");
 				show_error();
@@ -228,6 +240,7 @@ public class Calculate {
 							double num = Double.parseDouble(num_stack.pop().get_symbol());
 							if(num>=0) result = new BigDecimal(Math.round(Math.sqrt(num)*100000000)/100000000.0);
 							else {
+								System.out.println("Check");
 								show_error();
 							}
 						}
@@ -247,6 +260,7 @@ public class Calculate {
 			if(minus_count%2==1) return BigDecimal.valueOf(Double.valueOf(num_stack.pop().get_symbol())).negate(); 
 			else return BigDecimal.valueOf(Double.valueOf(num_stack.pop().get_symbol()));	
 		}catch(Exception e) {
+			System.out.println("Check1");
 			show_error();
 			return new BigDecimal(0);
 		}

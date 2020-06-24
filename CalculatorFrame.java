@@ -23,7 +23,7 @@ public class CalculatorFrame extends JFrame implements ActionListener, KeyListen
 	public CalculatorFrame(){
 		this.setTitle("Chanhyo's Calculator");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setSize(400,620);
+		this.setSize(450,650);
 		this.setResizable(false);
 		Container contentPane = this.getContentPane();
 		contentPane.setLayout(null);

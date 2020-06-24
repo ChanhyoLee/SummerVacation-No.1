@@ -7,7 +7,7 @@ public class RootPad extends Pad implements ActionListener {
 	NumberPanel np;
 
 	public RootPad(ScreenPanel sp,	NumberPanel np) {
-		super("âˆš(#)");
+		super("¡î(#)");
 		this.sp = sp;
 		this.np = np;
 		this.setSize(100,50);
@@ -18,7 +18,7 @@ public class RootPad extends Pad implements ActionListener {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		sp.update_screen("âˆš");
+		sp.update_screen("¡î");
 		this.requestDefaultFocus();
 		//np.requestFocus();
 	}
